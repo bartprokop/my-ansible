@@ -1,0 +1,24 @@
+---
+- hosts: jenkins-box
+  sudo: yes
+  sudo_user: root
+  tasks:
+  - name: Create jenkins user
+    user: name=jenkins group=jenkins shell=/bin/bash
+  - name: Ensure the /opt/jenkins directory exists
+    file: path=/opt/jenkins state=directory
+  - name: Stopping jenkins service
+    service: name=jenkins state=stopped
+    ignore_errors: yes
+  - name: Copy jenkins to remote
+    copy: src=jenkins-1.590.war dest=/opt/jenkins/jenkins.war
+  - name: Copy jenkins-cli to remote
+    copy: src=jenkins-cli.jar dest=/opt/jenkins/jenkins-cli.jar
+  - name: daemon script to /etc/init.d
+    copy: src=jenkins.sh dest=/etc/init.d/jenkins mode=755 backup=yes
+  - name: Copy startup script
+    copy: src=jenkins-start.sh dest=/opt/jenkins/jenkins-start.sh mode=755 backup=yes
+  - name: Ensure the /opt/jenkins/home directory exists
+    file: path=/opt/jenkins/home state=directory owner=jenkins group=jenkins
+  - name: Ensure service is enabled and started
+    service: name=jenkins enabled=yes state=restarted
