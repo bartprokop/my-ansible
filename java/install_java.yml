@@ -1,0 +1,15 @@
+---
+- hosts: java-boxes
+  sudo: yes
+  sudo_user: root
+  tasks:
+  - name: Ensure the /opt/java directory exists
+    file: path=/opt/java state=directory
+  - name: Push JRE 8 to remote
+    unarchive: src=server-jre-8u25-linux-x64.gz dest=/opt/java
+  - name: Set ownership to root.root
+    file: path=/opt/java/jdk1.8.0_25 owner=root group=root recurse=yes
+  - name: Copy profile.d script for JAVA_HOME evn var
+    copy: src=JAVA_HOME.sh dest=/etc/profile.d owner=root group=root mode=755 backup=yes
+  - name: remove old installation of JAVA
+    file: path=/opt/java/jdk1.8.0_11 state=absent
