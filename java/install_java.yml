@@ -1,15 +1,15 @@
 ---
-- hosts: java-boxes
-  sudo: yes
-  sudo_user: root
+- hosts: sailor.prkp.pl
+#  become: yes
+#  become_user: root
   tasks:
   - name: Ensure the /opt/java directory exists
     file: path=/opt/java state=directory
+  - name: Download latest Java JDK with Ansible get_url module
+    get_url: dest=/opt/java url=http://download.oracle.com/otn-pub/java/jdk/8u65-b17/jdk-8u65-linux-i586.tar.gz headers='Cookie:oraclelicense=accept-securebackup-cookie'
   - name: Push JRE 8 to remote
-    unarchive: src=server-jre-8u25-linux-x64.gz dest=/opt/java
+    unarchive: copy=no src=/opt/java/jdk-8u65-linux-i586.tar.gz dest=/opt/java
   - name: Set ownership to root.root
-    file: path=/opt/java/jdk1.8.0_25 owner=root group=root recurse=yes
-  - name: Copy profile.d script for JAVA_HOME evn var
-    copy: src=JAVA_HOME.sh dest=/etc/profile.d owner=root group=root mode=755 backup=yes
-  - name: remove old installation of JAVA
-    file: path=/opt/java/jdk1.8.0_11 state=absent
+    file: path=/opt/java/jdk1.8.0_65 owner=root group=root recurse=yes
+#  - name: Copy profile.d script for JAVA_HOME evn var
+#    copy: src=JAVA_HOME.sh dest=/etc/profile.d owner=root group=root mode=755 backup=yes
