@@ -6,10 +6,16 @@
   - name: Ensure the /opt/java directory exists
     file: path=/opt/java state=directory
   - name: Download latest Java JDK with Ansible get_url module
-    get_url: dest=/opt/java url=http://download.oracle.com/otn-pub/java/jdk/8u65-b17/jdk-8u65-linux-i586.tar.gz headers='Cookie:oraclelicense=accept-securebackup-cookie'
-  - name: Push JRE 8 to remote
+    get_url: dest=/opt/java/jdk-8u65-linux-i586.tar.gz url=http://download.oracle.com/otn-pub/java/jdk/8u65-b17/jdk-8u65-linux-i586.tar.gz headers='Cookie:oraclelicense=accept-securebackup-cookie'
+  - name: Remove old Java directory
+    file: path=/opt/java/jdk1.8.0_65 state=absent
+  - name: Unzipping JRE 8
     unarchive: copy=no src=/opt/java/jdk-8u65-linux-i586.tar.gz dest=/opt/java
   - name: Set ownership to root.root
     file: path=/opt/java/jdk1.8.0_65 owner=root group=root recurse=yes
 #  - name: Copy profile.d script for JAVA_HOME evn var
 #    copy: src=JAVA_HOME.sh dest=/etc/profile.d owner=root group=root mode=755 backup=yes
+  - name: Download JCE unlimited
+    get_url: dest=/opt/java/jce_policy-8.zip force=yes url=http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip headers='Cookie:oraclelicense=accept-securebackup-cookie'
+  - name: Unzip JCE
+    unarchive: copy=no src=/opt/java/jce_policy-8.zip dest=/opt/java
